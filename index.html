@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyControl V-Magic | Dashboard de Voo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Partículas de Fundo -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Grid de fundo -->
+    <div class="grid-bg"></div>
+
+    <div class="main-container">
+        <!-- Header com efeito neon -->
+        <header>
+            <div class="logo-container">
+                <div class="logo-glow"></div>
+                <h1 class="title-main">SKY<span class="title-accent">CONTROL</span></h1>
+            </div>
+            <p class="subtitle">Sistema de Gerenciamento de Tráfego Aéreo</p>
+            <div class="status-indicator">
+                <span class="pulse"></span>
+                <span class="status-text">ONLINE</span>
+            </div>
+        </header>
+
+        <!-- Dashboard Principal -->
+        <div class="dashboard-card">
+            <!-- Painel de Informações do Voo -->
+            <div class="flight-panel">
+                <div class="panel-header">
+                    <span class="panel-icon">✈️</span>
+                    <h2>DADOS DO VOO</h2>
+                    <div class="panel-line"></div>
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item neon-box">
+                        <label>Código do Voo</label>
+                        <span id="txt-codigo" class="neon-text">--</span>
+                    </div>
+                    <div class="info-item neon-box">
+                        <label>Status</label>
+                        <span id="txt-status" class="badge badge-waiting">AGUARDANDO</span>
+                    </div>
+                    <div class="info-item neon-box">
+                        <label>Origem</label>
+                        <span id="txt-origem" class="neon-text">--</span>
+                    </div>
+                    <div class="info-item neon-box">
+                        <label>Destino</label>
+                        <span id="txt-destino" class="neon-text">--</span>
+                    </div>
+                    <div class="info-item neon-box">
+                        <label>Horário</label>
+                        <span id="txt-horario" class="neon-text">--</span>
+                    </div>
+                    <div class="info-item neon-box">
+                        <label>Altitude</label>
+                        <div class="altitude-display">
+                            <span id="txt-altitude" class="neon-text-alt">0</span>
+                            <small>m</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Barra de progresso de altitude -->
+                <div class="altitude-bar-container">
+                    <label>ALTITUDE</label>
+                    <div class="altitude-bar">
+                        <div class="altitude-fill" id="altitude-fill"></div>
+                    </div>
+                    <span id="altitude-percent">0%</span>
+                </div>
+            </div>
+
+            <!-- Visão do Céu -->
+            <div class="sky-view">
+                <div class="sky-grid"></div>
+                <div class="clouds">
+                    <div class="cloud cloud-1"></div>
+                    <div class="cloud cloud-2"></div>
+                    <div class="cloud cloud-3"></div>
+                </div>
+                <img src="https://cdn-icons-png.flaticon.com/512/723/723971.png" id="aviao" alt="Avião" class="airplane">
+                <div class="airplane-glow"></div>
+                
+                <!-- Estrelas no céu -->
+                <div class="stars" id="stars"></div>
+            </div>
+
+            <!-- Painel de Controle -->
+            <div class="control-panel">
+                <div class="panel-header">
+                    <span class="panel-icon">🎮</span>
+                    <h2>CONTROLE</h2>
+                    <div class="panel-line"></div>
+                </div>
+                
+                <div class="button-group">
+                    <button onclick="meuVoo.decolar()" class="btn btn-decolar">
+                        <span class="btn-icon">🚀</span>
+                        <span class="btn-text">DECOLAR</span>
+                    </button>
+                    <button onclick="meuVoo.ganharAltitude()" class="btn btn-subir">
+                        <span class="btn-icon">⬆️</span>
+                        <span class="btn-text">SUBIR</span>
+                    </button>
+                    <button onclick="meuVoo.descer()" class="btn btn-descer">
+                        <span class="btn-icon">⬇️</span>
+                        <span class="btn-text">DESCER</span>
+                    </button>
+                    <button onclick="meuVoo.pousar()" class="btn btn-pousar">
+                        <span class="btn-icon">🛬</span>
+                        <span class="btn-text">POUSAR</span>
+                    </button>
+                </div>
+
+                <!-- Console de Logs -->
+                <div class="console-panel">
+                    <div class="console-header">
+                        <span>📟 LOGS DO SISTEMA</span>
+                    </div>
+                    <div class="console-output" id="console-output">
+                        <div class="log-entry system">> Sistema inicializado...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>SkyControl V-Magic © 2024 | Sistema de Controle Aéreo</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
