@@ -1,7 +1,4 @@
-/**
- * SKYCONTROL V-MAGIC - SISTEMA DE GERENCIAMENTO DE TRÁFEGO AÉREO
- * Versão Revolucionária com Partículas, Animações e Logging
- */
+
 
 class Voo {
     constructor(codigo, origem, destino, horario) {
@@ -18,16 +15,13 @@ class Voo {
         this.isFlying = false;
     }
 
-    // Atualiza todos os elementos da interface
     atualizarInterface() {
-        // Atualiza textos
         document.getElementById("txt-codigo").innerText = this.codigo;
         document.getElementById("txt-origem").innerText = this.origem;
         document.getElementById("txt-destino").innerText = this.destino;
         document.getElementById("txt-horario").innerText = this.horario;
         document.getElementById("txt-altitude").innerText = this.altitude.toLocaleString();
         
-        // Atualiza badge de status
         const badge = document.getElementById("txt-status");
         badge.className = 'badge';
         
@@ -42,12 +36,10 @@ class Voo {
             badge.classList.add("badge-waiting");
         }
 
-        // Atualiza barra de altitude
         const altitudePercent = Math.min((this.altitude / this.maxAltitude) * 100, 100);
         document.getElementById("altitude-fill").style.width = altitudePercent + "%";
         document.getElementById("altitude-percent").innerText = Math.round(altitudePercent) + "%";
 
-        // Atualiza visual do avião
         const imgAviao = document.getElementById("aviao");
         const glowAviao = document.querySelector(".airplane-glow");
         
@@ -62,7 +54,6 @@ class Voo {
         this.log(`Interface atualizada - Altitude: ${this.altitude}m`);
     }
 
-    // Decola o avião
     decolar() {
         if (this.status === "Aguardando" || this.status === "Pousado") {
             this.status = "Em Voo";
@@ -82,7 +73,6 @@ class Voo {
         }
     }
 
-    // Pousa o avião
     pousar() {
         if (this.status === "Em Voo") {
             this.status = "Pousado";
@@ -101,7 +91,6 @@ class Voo {
         }
     }
 
-    // Ganha altitude
     ganharAltitude() {
         if (this.status === "Em Voo") {
             if (this.altitude < this.maxAltitude) {
@@ -122,7 +111,6 @@ class Voo {
         }
     }
 
-    // Desce altitude
     descer() {
         if (this.status === "Em Voo") {
             if (this.altitude > 1000) {
@@ -141,7 +129,6 @@ class Voo {
         }
     }
 
-    // Adiciona log ao console
     log(mensagem, tipo = "info") {
         const consoleOutput = document.getElementById("console-output");
         const entry = document.createElement("div");
@@ -152,17 +139,14 @@ class Voo {
         
         entry.innerHTML = `> [${hora}] ${mensagem}`;
         consoleOutput.appendChild(entry);
-        
-        // Auto-scroll para o final
+
         consoleOutput.scrollTop = consoleOutput.scrollHeight;
         
-        // Limita quantidade de logs (máximo 50)
         if (consoleOutput.children.length > 50) {
             consoleOutput.removeChild(consoleOutput.firstChild);
         }
     }
 
-    // Cria efeito de partículas na decolagem
     criarExplosaoParticulas() {
         const skyView = document.querySelector(".sky-view");
         
@@ -181,9 +165,7 @@ class Voo {
                 animation: explode ${1 + Math.random()}s ease-out forwards;
                 animation-delay: ${Math.random() * 0.3}s;
             `;
-            
-            // Adiciona keyframes dinamicamente
-            if (!document.getElementById("dynamic-styles")) {
+                    if (!document.getElementById("dynamic-styles")) {
                 const style = document.createElement("style");
                 style.id = "dynamic-styles";
                 style.textContent = `
@@ -202,7 +184,7 @@ class Voo {
             
             skyView.appendChild(particle);
             
-            // Remove partícula após animação
+ 
             setTimeout(() => {
                 particle.remove();
             }, 2000);
@@ -210,7 +192,6 @@ class Voo {
     }
 }
 
-// ==================== SISTEMA DE PARTÍCULAS ====================
 
 class ParticleSystem {
     constructor() {
@@ -225,7 +206,7 @@ class ParticleSystem {
             const particle = document.createElement("div");
             particle.className = "particle";
             
-            // Posição aleatória
+
             particle.style.left = Math.random() * 100 + "%";
             particle.style.animationDelay = Math.random() * 15 + "s";
             particle.style.animationDuration = (15 + Math.random() * 10) + "s";
@@ -241,7 +222,7 @@ class ParticleSystem {
     }
 }
 
-// ==================== SISTEMA DE ESTRELAS ====================
+
 
 class StarSystem {
     constructor() {
@@ -266,20 +247,18 @@ class StarSystem {
     }
 }
 
-// ==================== INICIALIZAÇÃO ====================
-
 document.addEventListener("DOMContentLoaded", () => {
-    // Inicializa sistemas
+
     const particles = new ParticleSystem();
     const stars = new StarSystem();
     
-    // Cria voo personalizado
+
     const meuVoo = new Voo("SKY-777", "São Paulo (GRU)", "Maldivas (MLE)", "22:45");
     
-    // Atualiza interface inicial
+
     meuVoo.atualizarInterface();
     
-    // Log de boas-vindas
+
     setTimeout(() => {
         meuVoo.log("=" .repeat(30), "system");
         meuVoo.log("🌟 BEM-VINDO AO SKYCONTROL V-MAGIC!", "success");
@@ -289,7 +268,6 @@ document.addEventListener("DOMContentLoaded", () => {
         meuVoo.log(`🕐 Horário: ${meuVoo.horario}`, "info");
         meuVoo.log("💡 Use os botões para controlar o voo", "system");
     }, 500);
-    
-    // Disponibiliza globalmente
+
     window.meuVoo = meuVoo;
 });
