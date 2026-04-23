@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkyControl V-Magic | Dashboard de Voo</title>
+    <title>SkyControl V-Magic | Torre de Controle</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-
+    <!-- Fundo Animado -->
     <div class="particles" id="particles"></div>
-    
-
     <div class="grid-bg"></div>
 
     <div class="main-container">
 
+        <!-- Cabeçalho -->
         <header>
             <div class="logo-container">
                 <div class="logo-glow"></div>
@@ -26,117 +25,131 @@
             <p class="subtitle">Sistema de Gerenciamento de Tráfego Aéreo</p>
             <div class="status-indicator">
                 <span class="pulse"></span>
-                <span class="status-text">ONLINE</span>
+                <span class="status-text">TORRE ONLINE</span>
             </div>
         </header>
 
- 
+        <!-- FASE 3: Painel de Registro (Inputs para Try/Catch) -->
+        <div class="dashboard-card" style="margin-bottom: 30px; border-color: var(--accent);">
+            <div class="panel-header">
+                <span class="panel-icon">📝</span>
+                <h2>REGISTRO DE NOVO PLANO DE VOO</h2>
+                <div class="panel-line"></div>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-item neon-box">
+                    <label>Código do Voo</label>
+                    <input type="text" id="input-codigo" placeholder="Ex: SKY-777" 
+                           style="width: 100%; background: transparent; border: none; color: white; font-family: 'Orbitron'; outline: none;">
+                </div>
+                <div class="info-item neon-box">
+                    <label>Origem</label>
+                    <input type="text" id="input-origem" placeholder="Cidade A" 
+                           style="width: 100%; background: transparent; border: none; color: white; font-family: 'Orbitron'; outline: none;">
+                </div>
+                <div class="info-item neon-box" style="grid-column: span 2;">
+                    <label>Destino</label>
+                    <input type="text" id="input-destino" placeholder="Cidade B" 
+                           style="width: 100%; background: transparent; border: none; color: white; font-family: 'Orbitron'; outline: none;">
+                </div>
+            </div>
+
+            <button id="btn-registrar" class="btn btn-decolar" style="width: 100%; margin-top: 20px; flex-direction: row; justify-content: center; background: linear-gradient(135deg, var(--accent), #764ba2);">
+                <span class="btn-icon">💾</span>
+                <span class="btn-text">AUTORIZAR REGISTRO</span>
+            </button>
+
+            <!-- Local onde o erro do Catch ou Sucesso do Try aparecerá -->
+            <div id="avisoSistema" style="margin-top: 15px; text-align: center; font-family: 'Orbitron'; font-size: 0.8rem; min-height: 20px; transition: 0.3s;">
+                Aguardando entrada de dados...
+            </div>
+        </div>
+
+        <!-- Painel de Dados em Tempo Real -->
         <div class="dashboard-card">
-       
             <div class="flight-panel">
                 <div class="panel-header">
                     <span class="panel-icon">✈️</span>
-                    <h2>DADOS DO VOO</h2>
+                    <h2>DADOS DO VOO ATUAL</h2>
                     <div class="panel-line"></div>
                 </div>
                 
                 <div class="info-grid">
                     <div class="info-item neon-box">
-                        <label>Código do Voo</label>
+                        <label>Voo Selecionado</label>
                         <span id="txt-codigo" class="neon-text">--</span>
                     </div>
                     <div class="info-item neon-box">
                         <label>Status</label>
-                        <span id="txt-status" class="badge badge-waiting">AGUARDANDO</span>
+                        <span id="txt-status" class="badge badge-waiting">NENHUM VOO</span>
                     </div>
                     <div class="info-item neon-box">
-                        <label>Origem</label>
+                        <label>De (Origem)</label>
                         <span id="txt-origem" class="neon-text">--</span>
                     </div>
                     <div class="info-item neon-box">
-                        <label>Destino</label>
+                        <label>Para (Destino)</label>
                         <span id="txt-destino" class="neon-text">--</span>
                     </div>
-                    <div class="info-item neon-box">
-                        <label>Horário</label>
-                        <span id="txt-horario" class="neon-text">--</span>
-                    </div>
-                    <div class="info-item neon-box">
-                        <label>Altitude</label>
+                    <div class="info-item neon-box" style="grid-column: span 2;">
+                        <label>Altitude Atual</label>
                         <div class="altitude-display">
                             <span id="txt-altitude" class="neon-text-alt">0</span>
                             <small>m</small>
                         </div>
                     </div>
                 </div>
-
-                <div class="altitude-bar-container">
-                    <label>ALTITUDE</label>
-                    <div class="altitude-bar">
-                        <div class="altitude-fill" id="altitude-fill"></div>
-                    </div>
-                    <span id="altitude-percent">0%</span>
-                </div>
             </div>
 
+            <!-- Visualização do Céu -->
             <div class="sky-view">
                 <div class="sky-grid"></div>
                 <div class="clouds">
                     <div class="cloud cloud-1"></div>
                     <div class="cloud cloud-2"></div>
-                    <div class="cloud cloud-3"></div>
                 </div>
+                <div class="stars" id="stars"></div>
                 <img src="https://cdn-icons-png.flaticon.com/512/723/723971.png" id="aviao" alt="Avião" class="airplane">
                 <div class="airplane-glow"></div>
-                
-         
-                <div class="stars" id="stars"></div>
             </div>
 
+            <!-- Painel de Controle -->
             <div class="control-panel">
-                <div class="panel-header">
-                    <span class="panel-icon">🎮</span>
-                    <h2>CONTROLE</h2>
-                    <div class="panel-line"></div>
-                </div>
-                
                 <div class="button-group">
-                    <button onclick="meuVoo.decolar()" class="btn btn-decolar">
+                    <button id="btn-decolar" class="btn btn-decolar">
                         <span class="btn-icon">🚀</span>
                         <span class="btn-text">DECOLAR</span>
                     </button>
-                    <button onclick="meuVoo.ganharAltitude()" class="btn btn-subir">
+                    <button id="btn-subir" class="btn btn-subir">
                         <span class="btn-icon">⬆️</span>
                         <span class="btn-text">SUBIR</span>
                     </button>
-                    <button onclick="meuVoo.descer()" class="btn btn-descer">
+                    <button id="btn-descer" class="btn btn-descer">
                         <span class="btn-icon">⬇️</span>
                         <span class="btn-text">DESCER</span>
                     </button>
-                    <button onclick="meuVoo.pousar()" class="btn btn-pousar">
+                    <button id="btn-pousar" class="btn btn-pousar">
                         <span class="btn-icon">🛬</span>
                         <span class="btn-text">POUSAR</span>
                     </button>
                 </div>
 
-              
                 <div class="console-panel">
-                    <div class="console-header">
-                        <span>📟 LOGS DO SISTEMA</span>
-                    </div>
+                    <div class="console-header">📟 LOGS DA AERONAVE</div>
                     <div class="console-output" id="console-output">
-                        <div class="log-entry system">> Sistema inicializado...</div>
+                        <div class="log-entry system">> Terminal pronto...</div>
                     </div>
                 </div>
             </div>
         </div>
 
- 
         <footer>
-            <p>Viva o mais mais ne| Sistema de Controle Aéreo</p>
+            <p>© 2024 SkyControl V-Magic | Sistema de Segurança T1.P2.A8</p>
         </footer>
     </div>
 
-    <script src="script.js"></script>
+    <!-- FASE 1: Importando como MODULE -->
+    <script type="module" src="painel.js"></script>
 </body>
 </html>
