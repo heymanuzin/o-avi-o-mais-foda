@@ -61,10 +61,10 @@ class Voo {
             this.velocidade = 250;
             this.isFlying = true;
             
-            this.log("🚀 DECOLAGEM INICIADA!", "success");
-            this.log(`✈️ Voo ${this.codigo} decolou de ${this.origem}`, "success");
-            this.log(`📍 Rumo a ${this.destino}`, "info");
-            this.log(`🛫 Velocidade: ${this.velocidade} km/h`, "info");
+            this.log("DECOLAGEM INICIADA!", "success");
+            this.log(`Voo ${this.codigo} decolou de ${this.origem}`, "success");
+            this.log(`Rumo a ${this.destino}`, "info");
+            this.log(`Velocidade: ${this.velocidade} km/h`, "info");
             
             this.atualizarInterface();
             this.criarExplosaoParticulas();
@@ -80,10 +80,10 @@ class Voo {
             this.velocidade = 0;
             this.isFlying = false;
             
-            this.log("🛬 PROCEDIMENTO DE POUSO INICIADO", "warning");
-            this.log("⬇️ Descendendo...", "info");
-            this.log("✈️ Pouso realizado com sucesso!", "success");
-            this.log(`🏁 Voo ${this.codigo} encerrado em ${this.destino}`, "success");
+            this.log("PROCEDIMENTO DE POUSO INICIADO", "warning");
+            this.log("Descendendo...", "info");
+            this.log("Pouso realizado com sucesso!", "success");
+            this.log(`Voo ${this.codigo} encerrado em ${this.destino}`, "success");
             
             this.atualizarInterface();
         } else {
@@ -211,8 +211,9 @@ class ParticleSystem {
             particle.style.animationDelay = Math.random() * 15 + "s";
             particle.style.animationDuration = (15 + Math.random() * 10) + "s";
             
-            // Tamanho aleatório
+
             const size = 2 + Math.random() * 4;
+
             particle.style.width = size + "px";
             particle.style.height = size + "px";
             

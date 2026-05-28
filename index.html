@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkyControl V-Magic | Torre de Controle</title>
+    <title>AviaoPT| Torre de Controle</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Fundo Animado -->
+
     <div class="particles" id="particles"></div>
     <div class="grid-bg"></div>
 
     <div class="main-container">
 
-        <!-- Cabeçalho -->
         <header>
             <div class="logo-container">
                 <div class="logo-glow"></div>
@@ -29,10 +29,11 @@
             </div>
         </header>
 
-        <!-- FASE 3: Painel de Registro (Inputs para Try/Catch) -->
+
         <div class="dashboard-card" style="margin-bottom: 30px; border-color: var(--accent);">
             <div class="panel-header">
-                <span class="panel-icon">📝</span>
+                <span class="panel-icon">✎</span>
+
                 <h2>REGISTRO DE NOVO PLANO DE VOO</h2>
                 <div class="panel-line"></div>
             </div>
@@ -56,19 +57,25 @@
             </div>
 
             <button id="btn-registrar" class="btn btn-decolar" style="width: 100%; margin-top: 20px; flex-direction: row; justify-content: center; background: linear-gradient(135deg, var(--accent), #764ba2);">
-                <span class="btn-icon">💾</span>
+                <span class="btn-icon">⟲</span>
+
                 <span class="btn-text">AUTORIZAR REGISTRO</span>
             </button>
 
-            <!-- Local onde o erro do Catch ou Sucesso do Try aparecerá -->
+
             <div id="avisoSistema" style="margin-top: 15px; text-align: center; font-family: 'Orbitron'; font-size: 0.8rem; min-height: 20px; transition: 0.3s;">
                 Aguardando entrada de dados...
             </div>
         </div>
 
-        <!-- Painel de Dados em Tempo Real -->
+
         <div class="dashboard-card">
             <div class="flight-panel">
+                <div class="voos-list-panel">
+                    <div class="console-header">LISTA DE VOOS</div>
+                    <div id="lista-voos" class="voos-list"></div>
+                </div>
+
                 <div class="panel-header">
                     <span class="panel-icon">✈️</span>
                     <h2>DADOS DO VOO ATUAL</h2>
@@ -101,8 +108,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Visualização do Céu -->
             <div class="sky-view">
                 <div class="sky-grid"></div>
                 <div class="clouds">
@@ -114,29 +119,34 @@
                 <div class="airplane-glow"></div>
             </div>
 
-            <!-- Painel de Controle -->
+
             <div class="control-panel">
                 <div class="button-group">
                     <button id="btn-decolar" class="btn btn-decolar">
-                        <span class="btn-icon">🚀</span>
+                        <span class="btn-icon">⟰</span>
+
                         <span class="btn-text">DECOLAR</span>
                     </button>
                     <button id="btn-subir" class="btn btn-subir">
-                        <span class="btn-icon">⬆️</span>
+                        <span class="btn-icon">⇧</span>
+
                         <span class="btn-text">SUBIR</span>
                     </button>
                     <button id="btn-descer" class="btn btn-descer">
-                        <span class="btn-icon">⬇️</span>
+                        <span class="btn-icon">⇩</span>
+
                         <span class="btn-text">DESCER</span>
                     </button>
                     <button id="btn-pousar" class="btn btn-pousar">
-                        <span class="btn-icon">🛬</span>
+                        <span class="btn-icon">⟱</span>
+
                         <span class="btn-text">POUSAR</span>
                     </button>
                 </div>
 
                 <div class="console-panel">
-                    <div class="console-header">📟 LOGS DA AERONAVE</div>
+                    <div class="console-header">▣ LOGS DA AERONAVE</div>
+
                     <div class="console-output" id="console-output">
                         <div class="log-entry system">> Terminal pronto...</div>
                     </div>
@@ -149,7 +159,7 @@
         </footer>
     </div>
 
-    <!-- FASE 1: Importando como MODULE -->
-    <script type="module" src="painel.js"></script>
+
+    <script type="module" src="painel_fixed.js"></script>
 </body>
 </html>
