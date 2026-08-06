@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logbook - Re-hidratação de Objetos</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1a;
+            color: #00f2fe;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 { font-size: 1.8rem; }
+        p { color: #ccc; max-width: 600px; text-align: center; }
+        code {
+            background: #1a1a2e;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: #ffd700;
+        }
+        .hint {
+            background: #1a1a2e;
+            border: 1px solid #00f2fe;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🛫 Logbook — Re-hidratação de Objetos</h1>
+    <p>
+        Este arquivo apenas carrega o <code>logbook.js</code>.
+        Pressione <b>F12</b> e abra a aba <b>Console</b> para ver o
+        resultado da serialização e da re-hidratação do objeto <code>Voo</code>.
+    </p>
+    <div class="hint">
+        <p>
+            ✅ Se o console mostrar a mensagem com o emoji
+            <b>🛫 O voo G3-777 acabou de decolar de Curitiba!</b>
+            sem erros, o objeto foi re-hidratado com sucesso!
+        </p>
+    </div>
+
+    <script src="logbook.js"></script>
+</body>
+</html>

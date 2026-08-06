@@ -1,274 +1,165 @@
-
-
-class Voo {
-    constructor(codigo, origem, destino, horario) {
-        this.codigo = codigo;
-        this.origem = origem;
-        this.destino = destino;
-        this.horario = horario;
-        this.status = "Aguardando";
-        this.altitude = 0;
-        this.velocidade = 0;
-        this.temperatura = 15;
-        this.combustivel = 100;
-        this.maxAltitude = 12500;
-        this.isFlying = false;
+script>
+  /* ---------- MODELO ---------- */
+  class Voo {
+    constructor(codigo, origem, destino, horario, status) {
+      this.id = Voo.gerarId();
+      this.codigo = codigo.toUpperCase();
+      this.origem = origem;
+      this.destino = destino;
+      this.horario = horario;
+      this.status = status || "No Solo";
     }
-
-    atualizarInterface() {
-        document.getElementById("txt-codigo").innerText = this.codigo;
-        document.getElementById("txt-origem").innerText = this.origem;
-        document.getElementById("txt-destino").innerText = this.destino;
-        document.getElementById("txt-horario").innerText = this.horario;
-        document.getElementById("txt-altitude").innerText = this.altitude.toLocaleString();
-        
-        const badge = document.getElementById("txt-status");
-        badge.className = 'badge';
-        
-        if (this.status === "Em Voo") {
-            badge.innerText = "EM VOO";
-            badge.classList.add("badge-flying");
-        } else if (this.status === "Pousado") {
-            badge.innerText = "POUSADO";
-            badge.classList.add("badge-ground");
-        } else {
-            badge.innerText = "AGUARDANDO";
-            badge.classList.add("badge-waiting");
-        }
-
-        const altitudePercent = Math.min((this.altitude / this.maxAltitude) * 100, 100);
-        document.getElementById("altitude-fill").style.width = altitudePercent + "%";
-        document.getElementById("altitude-percent").innerText = Math.round(altitudePercent) + "%";
-
-        const imgAviao = document.getElementById("aviao");
-        const glowAviao = document.querySelector(".airplane-glow");
-        
-        if (this.isFlying) {
-            imgAviao.classList.add("flying");
-            glowAviao.classList.add("flying");
-        } else {
-            imgAviao.classList.remove("flying");
-            glowAviao.classList.remove("flying");
-        }
-
-        this.log(`Interface atualizada - Altitude: ${this.altitude}m`);
+    static gerarId(){
+      return Date.now().toString(36) + Math.random().toString(36).slice(2,7);
     }
+    decolar(){ this.status = "Em Voo"; }
+    pousar(){ this.status = "Pousado"; }
+    atrasar(){ this.status = "Atrasado"; }
+    liberar(){ this.status = "No Solo"; }
+  }
 
-    decolar() {
-        if (this.status === "Aguardando" || this.status === "Pousado") {
-            this.status = "Em Voo";
-            this.altitude = 1000;
-            this.velocidade = 250;
-            this.isFlying = true;
-            
-            this.log("DECOLAGEM INICIADA!", "success");
-            this.log(`Voo ${this.codigo} decolou de ${this.origem}`, "success");
-            this.log(`Rumo a ${this.destino}`, "info");
-            this.log(`Velocidade: ${this.velocidade} km/h`, "info");
-            
-            this.atualizarInterface();
-            this.criarExplosaoParticulas();
-        } else {
-            this.log("⚠️ Avião já está em voo!", "warning");
-        }
+  const STORAGE_KEY = "aeroporto_inteligente_logbook";
+  let voos = [];
+
+  /* ---------- PERSISTÊNCIA (com re-hidratação) ---------- */
+  function salvar(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(voos));
+  }
+
+  function carregar(){
+    const cru = localStorage.getItem(STORAGE_KEY);
+    if(!cru){
+      voos = seedInicial();
+      salvar();
+      return;
     }
+    const dadosCrus = JSON.parse(cru);
+    // re-hidratação: recria instâncias reais da classe Voo a partir do JSON puro
+    voos = dadosCrus.map(d => {
+      const v = new Voo(d.codigo, d.origem, d.destino, d.horario, d.status);
+      v.id = d.id;
+      return v;
+    });
+  }
 
-    pousar() {
-        if (this.status === "Em Voo") {
-            this.status = "Pousado";
-            this.altitude = 0;
-            this.velocidade = 0;
-            this.isFlying = false;
-            
-            this.log("PROCEDIMENTO DE POUSO INICIADO", "warning");
-            this.log("Descendendo...", "info");
-            this.log("Pouso realizado com sucesso!", "success");
-            this.log(`Voo ${this.codigo} encerrado em ${this.destino}`, "success");
-            
-            this.atualizarInterface();
-        } else {
-            this.log("⚠️ Avião está no solo!", "warning");
-        }
+  function seedInicial(){
+    return [
+      new Voo("G3-777", "Curitiba", "Guarulhos", "08:15", "No Solo"),
+      new Voo("AD-4521", "Assis Chateaubriand", "Congonhas", "09:40", "Em Voo"),
+      new Voo("LA-1090", "Foz do Iguaçu", "Brasília", "10:05", "Atrasado"),
+    ];
+  }
+
+  /* ---------- RENDER ---------- */
+  const boardBody = document.getElementById("boardBody");
+
+  function statusMeta(status){
+    const map = {
+      "No Solo":  { classe: "no-solo" },
+      "Em Voo":   { classe: "em-voo" },
+      "Pousado":  { classe: "pousado" },
+      "Atrasado": { classe: "atrasado" },
+    };
+    return map[status] || map["No Solo"];
+  }
+
+  function acoesPara(voo){
+    const botoes = [];
+    if(voo.status === "No Solo"){
+      botoes.push(`<button data-action="decolar" data-id="${voo.id}">Decolar</button>`);
+      botoes.push(`<button data-action="atrasar" data-id="${voo.id}" class="danger">Atrasar</button>`);
+    } else if(voo.status === "Em Voo"){
+      botoes.push(`<button data-action="pousar" data-id="${voo.id}">Pousar</button>`);
+    } else if(voo.status === "Atrasado"){
+      botoes.push(`<button data-action="liberar" data-id="${voo.id}">Liberar</button>`);
+      botoes.push(`<button data-action="decolar" data-id="${voo.id}">Decolar</button>`);
+    } else if(voo.status === "Pousado"){
+      botoes.push(`<button data-action="liberar" data-id="${voo.id}">Reiniciar</button>`);
     }
+    botoes.push(`<button data-action="remover" data-id="${voo.id}" class="remove" aria-label="Remover voo ${voo.codigo}">✕</button>`);
+    return botoes.join("");
+  }
 
-    ganharAltitude() {
-        if (this.status === "Em Voo") {
-            if (this.altitude < this.maxAltitude) {
-                this.altitude += 1500;
-                this.velocidade += 50;
-                this.combustivel -= 2;
-                
-                this.log(`⬆️ Subindo para ${this.altitude}m`, "info");
-                this.log(`🚀 Velocidade: ${this.velocidade} km/h`, "info");
-                this.log(`⛽ Combustível: ${this.combustivel}%`, "warning");
-                
-                this.atualizarInterface();
-            } else {
-                this.log("⚠️ Altitude máxima atingida!", "danger");
-            }
-        } else {
-            this.log("🚫 Não é possível subir! Avião no solo.", "danger");
-        }
+  function render(idParaFlip){
+    if(voos.length === 0){
+      boardBody.innerHTML = `<div class="empty-msg">Nenhum voo cadastrado. Adicione um voo abaixo para começar.</div>`;
+    } else {
+      boardBody.innerHTML = voos.map(voo => {
+        const meta = statusMeta(voo.status);
+        const flip = voo.id === idParaFlip ? "flip" : "";
+        return `
+        <div class="row ${flip}">
+          <div class="tile col-codigo">${voo.horario}</div>
+          <div class="tile col-origem"><span>Origem</span>${voo.origem}</div>
+          <div class="tile col-destino"><span>Destino</span>${voo.destino}</div>
+          <div class="tile">
+            <span class="badge ${meta.classe}"><span class="dot"></span>${voo.status}</span>
+          </div>
+          <div class="actions">${acoesPara(voo)}</div>
+        </div>`;
+      }).join("");
     }
+    atualizarContadores();
+  }
 
-    descer() {
-        if (this.status === "Em Voo") {
-            if (this.altitude > 1000) {
-                this.altitude -= 1500;
-                this.velocidade -= 30;
-                
-                this.log(`⬇️ Descendo para ${this.altitude}m`, "info");
-                this.log(`🚀 Velocidade: ${this.velocidade} km/h`, "info");
-                
-                this.atualizarInterface();
-            } else {
-                this.log("⚠️ Para pousar, use o botão POUSAR!", "warning");
-            }
-        } else {
-            this.log("🚫 Não é possível descer! Avião no solo.", "danger");
-        }
+  function atualizarContadores(){
+    const cont = { "No Solo":0, "Em Voo":0, "Pousado":0, "Atrasado":0 };
+    voos.forEach(v => { if(cont[v.status] !== undefined) cont[v.status]++; });
+    document.getElementById("cNoSolo").textContent = cont["No Solo"];
+    document.getElementById("cEmVoo").textContent = cont["Em Voo"];
+    document.getElementById("cPousado").textContent = cont["Pousado"];
+    document.getElementById("cAtrasado").textContent = cont["Atrasado"];
+  }
+
+  /* ---------- AÇÕES ---------- */
+  boardBody.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-action]");
+    if(!btn) return;
+    const { action, id } = btn.dataset;
+    if(action === "remover"){
+      voos = voos.filter(v => v.id !== id);
+      salvar();
+      render();
+      return;
     }
+    const voo = voos.find(v => v.id === id);
+    if(!voo) return;
+    if(action === "decolar") voo.decolar();
+    if(action === "pousar") voo.pousar();
+    if(action === "atrasar") voo.atrasar();
+    if(action === "liberar") voo.liberar();
+    salvar();
+    render(id);
+  });
 
-    log(mensagem, tipo = "info") {
-        const consoleOutput = document.getElementById("console-output");
-        const entry = document.createElement("div");
-        entry.className = `log-entry ${tipo}`;
-        
-        const agora = new Date();
-        const hora = agora.toLocaleTimeString("pt-BR", { hour12: false });
-        
-        entry.innerHTML = `> [${hora}] ${mensagem}`;
-        consoleOutput.appendChild(entry);
+  document.getElementById("addFlightForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const codigo = document.getElementById("codigo").value.trim();
+    const origem = document.getElementById("origem").value.trim();
+    const destino = document.getElementById("destino").value.trim();
+    const horario = document.getElementById("horario").value;
+    if(!codigo || !origem || !destino || !horario) return;
 
-        consoleOutput.scrollTop = consoleOutput.scrollHeight;
-        
-        if (consoleOutput.children.length > 50) {
-            consoleOutput.removeChild(consoleOutput.firstChild);
-        }
-    }
+    const novoVoo = new Voo(codigo, origem, destino, horario);
+    voos.push(novoVoo);
+    voos.sort((a,b) => a.horario.localeCompare(b.horario));
+    salvar();
+    render(novoVoo.id);
+    e.target.reset();
+    document.getElementById("codigo").focus();
+  });
 
-    criarExplosaoParticulas() {
-        const skyView = document.querySelector(".sky-view");
-        
-        for (let i = 0; i < 20; i++) {
-            const particle = document.createElement("div");
-            particle.style.cssText = `
-                position: absolute;
-                width: 8px;
-                height: 8px;
-                background: #00f2fe;
-                border-radius: 50%;
-                bottom: 30px;
-                left: 50%;
-                transform: translateX(-50%);
-                box-shadow: 0 0 10px #00f2fe, 0 0 20px #00f2fe;
-                animation: explode ${1 + Math.random()}s ease-out forwards;
-                animation-delay: ${Math.random() * 0.3}s;
-            `;
-                    if (!document.getElementById("dynamic-styles")) {
-                const style = document.createElement("style");
-                style.id = "dynamic-styles";
-                style.textContent = `
-                    @keyframes explode {
-                        0% { transform: translateX(-50%) scale(1); opacity: 1; }
-                        100% { 
-                            transform: translateX(${(-100 - Math.random() * 100) + "px"}) 
-                                     translateY(${-50 - Math.random() * 100 + "px"}) 
-                                     scale(0); 
-                            opacity: 0; 
-                        }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-            
-            skyView.appendChild(particle);
-            
- 
-            setTimeout(() => {
-                particle.remove();
-            }, 2000);
-        }
-    }
-}
+  /* ---------- RELÓGIO ---------- */
+  function atualizarRelogio(){
+    const agora = new Date();
+    document.getElementById("clock").textContent = agora.toLocaleTimeString("pt-BR");
+    document.getElementById("dateLine").textContent = agora.toLocaleDateString("pt-BR", {
+      weekday: "long", day: "2-digit", month: "long", year: "numeric"
+    }).toUpperCase();
+  }
+  atualizarRelogio();
+  setInterval(atualizarRelogio, 1000);
 
-
-class ParticleSystem {
-    constructor() {
-        this.container = document.getElementById("particles");
-        this.particles = [];
-        this.quantidade = 50;
-        this.criarParticulas();
-    }
-
-    criarParticulas() {
-        for (let i = 0; i < this.quantidade; i++) {
-            const particle = document.createElement("div");
-            particle.className = "particle";
-            
-
-            particle.style.left = Math.random() * 100 + "%";
-            particle.style.animationDelay = Math.random() * 15 + "s";
-            particle.style.animationDuration = (15 + Math.random() * 10) + "s";
-            
-
-            const size = 2 + Math.random() * 4;
-
-            particle.style.width = size + "px";
-            particle.style.height = size + "px";
-            
-            this.container.appendChild(particle);
-            this.particles.push(particle);
-        }
-    }
-}
-
-
-
-class StarSystem {
-    constructor() {
-        this.container = document.getElementById("stars");
-        this.criarEstrelas();
-    }
-
-    criarEstrelas() {
-        for (let i = 0; i < 50; i++) {
-            const star = document.createElement("div");
-            star.className = "star";
-            star.style.left = Math.random() * 100 + "%";
-            star.style.top = Math.random() * 100 + "%";
-            
-            const size = 1 + Math.random() * 2;
-            star.style.width = size + "px";
-            star.style.height = size + "px";
-            star.style.animationDelay = Math.random() * 2 + "s";
-            
-            this.container.appendChild(star);
-        }
-    }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    const particles = new ParticleSystem();
-    const stars = new StarSystem();
-    
-
-    const meuVoo = new Voo("SKY-777", "São Paulo (GRU)", "Maldivas (MLE)", "22:45");
-    
-
-    meuVoo.atualizarInterface();
-    
-
-    setTimeout(() => {
-        meuVoo.log("=" .repeat(30), "system");
-        meuVoo.log("🌟 BEM-VINDO AO SKYCONTROL V-MAGIC!", "success");
-        meuVoo.log("=" .repeat(30), "system");
-        meuVoo.log(`✈️ Voo ${meuVoo.codigo} pronto para decolagem`, "info");
-        meuVoo.log(`📍 Rota: ${meuVoo.origem} → ${meuVoo.destino}`, "info");
-        meuVoo.log(`🕐 Horário: ${meuVoo.horario}`, "info");
-        meuVoo.log("💡 Use os botões para controlar o voo", "system");
-    }, 500);
-
-    window.meuVoo = meuVoo;
-});
+  /* ---------- INICIALIZAÇÃO ---------- */
+  carregar();
+  render();
